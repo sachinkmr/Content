@@ -3155,6 +3155,16 @@ left
 
 @font-face {
 	font-family: "Material-Design-Icons";
+	src: url(https://cdn.rawgit.com/sachinkmr/Content/master/SEOBOX/css/fonts/Material-Design-Icons/MaterialIcons-Regular.eot?#iefix)
+		format("embedded-opentype"),
+		url(https://cdn.rawgit.com/sachinkmr/Content/master/SEOBOX/css/fonts/Material-Design-Icons/Material-Design-Icons.woff2)
+		format("woff2"),
+		url(https://cdn.rawgit.com/sachinkmr/Content/master/SEOBOX/css/fonts/Material-Design-Icons/MaterialIcons-Regular.woff)
+		format("woff"),
+		url(https://cdn.rawgit.com/google/material-design-icons/master/iconfont/MaterialIcons-Regular.ttf)
+		format("truetype"),
+		url(https://cdn.rawgit.com/google/material-design-icons/master/iconfont/MaterialIcons-Regular.svg#Material-Design-Icons)
+		format("svg");
 	font-weight: normal;
 	font-style: normal
 }
