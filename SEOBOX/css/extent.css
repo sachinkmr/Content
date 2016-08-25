@@ -1,30 +1,3 @@
-
-Skip to content
-This repository
-
-    Pull requests
-    Issues
-    Gist
-
-    @sachinkmr
-
-1
-0
-
-    0
-
-sachinkmr/Content
-Code
-Issues 0
-Pull requests 0
-Wiki
-Pulse
-Graphs
-Settings
-Content/SEOBOX/css/extent.css
-fa0734e an hour ago
-@sachinkmr sachinkmr adding css
-11551 lines (8568 sloc) 160 KB
 /*!
  * Materialize v0.97.5 (http://materializecss.com)
  * Copyright 2014-2015 Materialize
@@ -2766,6 +2739,21 @@ td, th {
 	overflow: hidden
 }
 
+#percentage{
+	width: 160px;
+    height: 130px;
+	margin: 18px 62px;
+}
+.pass-percentage{
+	width: 160px;
+	padding-top: 55px !important;
+    height: 130px;
+	font-size: 35px !important;
+    text-align: left !important;
+}
+#percentage-block{
+	display:flex;
+}
 .collection .collection-item {
 	background-color: #fff;
 	line-height: 1.5rem;
@@ -10558,11 +10546,12 @@ nav i {
 }
 
 .card-panel .panel-lead {
-	margin-top: 70px;
+	margin-top: 0px;
+	
 }
 
 .panel-lead {
-	display: block;
+	
 	font-size: 20px;
 	text-align: center;
 }
@@ -10828,7 +10817,7 @@ header {
 }
 
 #dashboard-view .progress {
-	margin-top: 100px;
+	margin-top: 30px;
 }
 
 .chart-box {
@@ -11575,8 +11564,4 @@ body.dark, .dark .dropdown-content li {
 		border-bottom: 10px solid transparent
 	}
 }
-
-    Contact GitHub API Training Shop Blog About 
-
-    © 2016 GitHub, Inc. Terms Privacy Security Status Help 
 

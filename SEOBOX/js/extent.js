@@ -7941,7 +7941,7 @@ function(a) {
                         g.stopPropagation()
                     })
                 }), d.wrap(h);
-                var o = a('<span class="caret">?</span>');
+                var o = a('<span class="caret">▼</span>');
                 d.is(":disabled") && o.addClass("disabled");
                 var p = m.replace(/"/g, """),
                     q = a('<input type="text" class="select-dropdown" readonly="true" ' + (d.is(":disabled") ? "disabled" : "") + ' data-activates="select-options-' + g + '" value="' + p + '"/>');
@@ -10853,7 +10853,7 @@ function() {
  * Featherlight - ultra slim jQuery lightbox
  * Version 1.3.4 - http://noelboss.github.io/featherlight/
  *
- * Copyright 2015, No�l Raoul Bossart (http://www.noelboss.com)
+ * Copyright 2015, Noël Raoul Bossart (http://www.noelboss.com)
  * MIT Licensed.
  **/! function(a) {
     "use strict";
@@ -10912,7 +10912,7 @@ function() {
         closeSpeed: 250,
         closeOnClick: "background",
         closeOnEsc: !0,
-        closeIcon: "?",
+        closeIcon: "✕",
         loading: "",
         persist: !1,
         otherClose: null,
@@ -11665,12 +11665,13 @@ function redrawCharts() {
 
     $('#test-analysis, #step-analysis').html('');
     $('ul.doughnut-legend').html('');
-    testChart();
+
     testsChart();
     stepsChart();
+
     $('ul.doughnut-legend').addClass('right');
 }
-
+var percentage=0;
 /* update data for dashboard [DASHBOARD] */
 function refreshData() {
     var el = $('#test-count-setting');
@@ -11712,7 +11713,7 @@ function refreshData() {
     $('.t-skipped-count').text(skippedTests);
     $('.t-others-count').text(warningTests + errorTests + skippedTests + unknownTests);
 
-    var percentage = Math.round((passedTests * 100) / (passedTests + failedTests + fatalTests + warningTests + errorTests + unknownTests + skippedTests)) + '%';
+    percentage = Math.round((passedTests * 100) / (passedTests + failedTests + fatalTests + warningTests + errorTests + unknownTests + skippedTests)) + '%';
     $('.pass-percentage.panel-lead').text(percentage);
     $('#dashboard-view .determinate').attr('style', 'width:' + percentage);
 
@@ -11765,8 +11766,16 @@ function refreshData() {
 var options = {
     segmentShowStroke: false,
     percentageInnerCutout: 55,
-    animation:true,
-    responsive: true,
+	animationSteps : 100,
+
+    //String - Animation easing effect
+    animationEasing : "easeOutBounce",
+
+    //Boolean - Whether we animate the rotation of the Doughnut
+    animateRotate : true,
+
+    //Boolean - Whether we animate scaling the Doughnut from the centre
+    animateScale : true,
     legendTemplate: '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<segments.length; i++) {%><li><%if(segments[i].label && segments[i].value){%><span style=\'background-color:<%=segments[i].fillColor%>\'></span><%=segments[i].label%><%}%></li><%}%></ul>'
 };
 
@@ -11863,54 +11872,6 @@ function stepsChart() {
     drawLegend(stepChart, 'step-analysis');
 }
 
-function testChart() {
-    var data = [{
-        value: passedSteps,
-        color: '#00af00',
-        highlight: '#32bf32',
-        label: 'Pass'
-    }, {
-        value: infoSteps,
-        color: '#46BFBD',
-        highlight: '#5AD3D1',
-        label: 'Info'
-    }, {
-        value: failedSteps,
-        color: '#F7464A',
-        highlight: '#FF5A5E',
-        label: 'Fail'
-    }, {
-        value: fatalSteps,
-        color: '#8b0000',
-        highlight: '#a23232',
-        label: 'Fatal'
-    }, {
-        value: errorSteps,
-        color: '#ff6347',
-        highlight: '#ff826b',
-        label: 'Error'
-    }, {
-        value: warningSteps,
-        color: '#FDB45C',
-        highlight: '#FFC870',
-        label: 'Warning'
-    }, {
-        value: skippedSteps,
-        color: '#1e90ff',
-        highlight: '#4aa6ff',
-        label: 'Skip'
-    }, {
-        value: unknownSteps,
-        color: '#222',
-        highlight: '#444',
-        label: 'Unknown'
-    }];
-
-    var ctx = $('#test-step-analysis').get(0).getContext('2d');
-    stepChart = new Chart(ctx).Doughnut(data, options);
-    drawLegend(stepChart, 'test-step-analysis');
-}
-
 /* draw legend for test and step charts [DASHBOARD] */
 function drawLegend(chart, id) {
     var helpers = Chart.helpers;
@@ -11935,5 +11896,4 @@ function drawLegend(chart, id) {
 
 testsChart();
 stepsChart();
-testChart();
 $('ul.doughnut-legend').addClass('right'); 
