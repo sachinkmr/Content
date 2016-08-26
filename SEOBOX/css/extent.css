@@ -2744,6 +2744,9 @@ td, th {
     height: 130px;
 	margin: 5px 30px;
 }
+#searchTests{
+	display:none;
+}
 .pass-percentage{
 	width: 160px;
 	padding-top: 55px !important;
