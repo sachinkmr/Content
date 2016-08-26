@@ -315,6 +315,7 @@ $('.mdi-action-search, .fa-search').click(function() {
     var s = $('.search > .input-field');
     s.animate({
         width: s.css('width') == '0px' ? '200px' : '0px'
+		$('#searchTests').toggle();
     }, 200).toggleClass('enabled', 200);
 });
 
