@@ -312,10 +312,10 @@ $('.step-filters').click(function(evt) {
 /* toggle search */
 $('.mdi-action-search, .fa-search').click(function() {
     $(this).toggleClass('active');
+	$('#searchTests').toggle();
     var s = $('.search > .input-field');
     s.animate({
-        width: s.css('width') == '0px' ? '200px' : '0px'
-		$('#searchTests').toggle();
+        width: s.css('width') == '0px' ? '200px' : '0px'		
     }, 200).toggleClass('enabled', 200);
 });
 
