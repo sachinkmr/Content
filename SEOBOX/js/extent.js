@@ -538,7 +538,7 @@ function redrawCharts() {
 
     $('ul.doughnut-legend').addClass('right');
 }
-var percentage=0;
+
 /* update data for dashboard [DASHBOARD] */
 function refreshData() {
     var el = $('#test-count-setting');
@@ -579,11 +579,11 @@ function refreshData() {
     $('.t-error-count').text(errorTests);
     $('.t-skipped-count').text(skippedTests);
     $('.t-others-count').text(warningTests + errorTests + skippedTests + unknownTests);
-
-    percentage = Math.round((passedTests * 100) / (passedTests + failedTests + fatalTests + warningTests + errorTests + unknownTests + skippedTests)) + '%';
+/*
+	var percentage = Math.round((passedTests * 100) / (passedTests + failedTests + fatalTests + warningTests + errorTests + unknownTests + skippedTests)) + '%';
     $('.pass-percentage.panel-lead').text(percentage);
     $('#dashboard-view .determinate').attr('style', 'width:' + percentage);
-
+*/
     totalSteps = $('#test-collection .test.displayed > .test-body > .test-steps > table td.status, #test-collection .test.displayed .node-list > li.displayed td.status').length;
     passedSteps = $('#test-collection .test.displayed > .test-body > .test-steps > table td.status.pass, #test-collection .test.displayed .node-list > li.displayed td.status.pass').length;
     failedSteps = $('#test-collection .test.displayed > .test-body > .test-steps > table td.status.fail, #test-collection .test.displayed .node-list > li.displayed td.status.fail').length;
