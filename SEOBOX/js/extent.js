@@ -764,3 +764,21 @@ function drawLegend(chart, id) {
 testsChart();
 stepsChart();
 $('ul.doughnut-legend').addClass('right'); 
+$( document ).ready(function() {
+	$('li.analysis.waves-effect.active').click();			    
+	var total=$('.total-tests .panel-lead').text();
+	var passed=$('.t-pass-count').text();
+	var percentage = Math.round((passed * 100) / (total));
+	var pieData = [{
+			  value: percentage,
+			  color:"#3F9F3F"
+			},
+			{
+			  value : 100-percentage,
+			  color : "#eceff5"
+			}];	
+		var ctx = document.getElementById("percentage").getContext('2d');
+		stepChart = new Chart(ctx).Doughnut(pieData, options);	
+	$('.pass-percentage.panel-lead').text(percentage+ '%');
+    $('#dashboard-view .determinate').attr('style', 'width:' + percentage);		
+});	
