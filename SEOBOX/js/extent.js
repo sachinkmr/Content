@@ -780,5 +780,5 @@ $( document ).ready(function() {
 		var ctx = document.getElementById("percentage").getContext('2d');
 		stepChart = new Chart(ctx).Doughnut(pieData, options);	
 	$('.pass-percentage.panel-lead').text(percentage+ '%');
-    $('#dashboard-view .determinate').attr('style', 'width:' + percentage);		
+    $('#dashboard-view .determinate').attr('style', 'width:' + percentage+ '%');		
 });	
