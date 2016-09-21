@@ -2740,17 +2740,18 @@ td, th {
 }
 
 #percentage{
-	width: 275px ;
-    height: 138px ;
+	width: 275px !important;
+    height: 138px !important;
 }
 #searchTests{
 	display:none;
 }
 .pass-percentage{
 	font-size: 35px !important;
+
 }
 #percentage-block{
-	    display: inline-flex;
+	    display: inherit;
 }
 .collection .collection-item {
 	background-color: #fff;
@@ -10815,7 +10816,7 @@ header {
 }
 
 #dashboard-view .progress {
-	margin-top: 30px;
+	margin-top: 20px;
 }
 
 .chart-box {
