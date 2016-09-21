@@ -2740,23 +2740,17 @@ td, th {
 }
 
 #percentage{
-	width: 160px;
-    height: 130px;
-	margin: 5px 30px;
+	width: 275px ;
+    height: 138px ;
 }
 #searchTests{
 	display:none;
 }
 .pass-percentage{
-	width: 160px;
-	padding-top: 55px !important;
-    height: 130px;
 	font-size: 35px !important;
-    text-align: left !important;
 }
 #percentage-block{
-	    display: block;
-    text-align: center;
+	    display: inline-flex;
 }
 .collection .collection-item {
 	background-color: #fff;
