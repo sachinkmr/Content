@@ -11568,4 +11568,11 @@ body.dark, .dark .dropdown-content li {
 		border-bottom: 10px solid transparent
 	}
 }
+#report-footer{
+	width: 100%;
+    display: block;
+    text-align: right;
+    background-color: white;
+    padding: 20px 10px;
+}
 
