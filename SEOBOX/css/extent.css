@@ -2740,22 +2740,20 @@ td, th {
 }
 
 #percentage{
-	width: 160px;
-    height: 130px;
-	margin: 5px 30px;
+	width: 275px !important;
+    height: 138px !important;
+
 }
 #searchTests{
 	display:none;
 }
 .pass-percentage{
-	width: 160px;
-	padding-top: 55px !important;
-    height: 130px;
+	
 	font-size: 35px !important;
-    text-align: left !important;
+    
 }
 #percentage-block{
-	display:flex;
+	display:inherit;
 }
 .collection .collection-item {
 	background-color: #fff;
@@ -11567,4 +11565,10 @@ body.dark, .dark .dropdown-content li {
 		border-bottom: 10px solid transparent
 	}
 }
-
+#report-footer{
+	width: 100%;
+    display: block;
+    text-align: right;
+    background-color: white;
+    padding: 20px 10px;
+}
