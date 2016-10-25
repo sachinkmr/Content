@@ -11572,3 +11572,6 @@ body.dark, .dark .dropdown-content li {
     background-color: white;
     padding: 20px 10px;
 }
+.details-container table a#loadMore{
+	margin:20px auto;
+}
