@@ -601,7 +601,7 @@ function fetchResults() {
 	if(totalLogs<limit){		
 		return;
 	}
-	var url='http://'+$("div#testDataCount input#dbhost").val()+':28017/'+$('#testDataCount #report').val()+'/'+id+'/?limit='+limit+'&skip='+page;
+	var url='http://'+$("div#testDataCount input#dbhost").val()+':'+parseInt($("div#testDataCount input#dbhost").val())+'/'+$('#testDataCount #report').val()+'/'+id+'/?limit='+limit+'&skip='+page;
     $.ajax({
         url: url,
         type: 'get',
