@@ -592,7 +592,8 @@ $('.test').click(function () {
     fetchResults();
 });
 
-
+var host=$("div#testDataCount input#dbhost").val();
+var port=parseInt($("div#testDataCount input#dbport").val().replace(/,/g, ""));
 
 function fetchResults() {
 	$('.details-container #loadMore').html('<i class="material-icons left">loop</i> Loading Results...');	
@@ -601,7 +602,7 @@ function fetchResults() {
 	if(totalLogs<limit){		
 		return;
 	}
-	var url='http://'+$("div#testDataCount input#dbhost").val()+':'+parseInt($("div#testDataCount input#dbhost").val())+'/'+$('#testDataCount #report').val()+'/'+id+'/?limit='+limit+'&skip='+page;
+	var url='http://'+host+':'+port+'/'+$('#testDataCount #report').val()+'/'+id+'/?limit='+limit+'&skip='+page;
     $.ajax({
         url: url,
         type: 'get',
