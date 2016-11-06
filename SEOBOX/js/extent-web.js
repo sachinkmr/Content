@@ -575,6 +575,7 @@ var id;
 $('.test').click(function () {
     var t = $(this);
     totalLogs = limit;
+	page = 0;
 	id = t.attr('extentid');
     page = parseInt($('#testDataCount #pageNo').val('0').val());
     $('#test-collection .test').removeClass('active');
@@ -583,7 +584,7 @@ $('.test').click(function () {
     $('#test-details-wrapper .details-name').html(t.find('.test-name').html());
     $('#test-details-wrapper .details-container').append($(el));
     $('.details-container .test-body .test-steps table.table-results').css('display', 'table');   
-	
+	 
 	$('.details-container #loadMore').bind('click', function(){
 		if($(this).attr('data-clickable')=='true'){
 			fetchResults();
@@ -598,7 +599,8 @@ function fetchResults() {
 	$('.details-container #loadMore').html('<i class="material-icons left">loop</i> Loading Results...');	
 	$('.details-container #loadMore').attr('data-clickable', 'false');
 	$('.details-container #loadMore').removeClass('hide');
-	if(totalLogs<=page){		
+	if(totalLogs<limit){
+		$('.details-container #loadMore').addClass('hide');		
 		return;
 	}
 
@@ -611,18 +613,18 @@ function fetchResults() {
 		},
         success: function (result) {	
 			result=$.parseJSON(result);
-			totalLogs=result.totalRecords;
+			totalLogs=Object.keys(result.logs).length;
             page = page + limit;            
-            $.each($.parseJSON(result.logs), function (index, log) {   
+			if(totalLogs<limit){
+				$('.details-container #loadMore').addClass('hide');
+			}
+			$('.details-container #loadMore').attr('data-clickable', 'true');
+			$('.details-container #loadMore').html('Load More Results');
+            $.each(result.logs, function (index, log) {   
 				log=$.parseJSON(log);
                 $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
                 var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
                 $('.details-container .test-body .test-steps table.table-results tbody tr:last-child').html(ic);	
-				if(totalLogs<=page){
-					$('.details-container #loadMore').addClass('hide');
-				}
-				$('.details-container #loadMore').attr('data-clickable', 'true');
-				$('.details-container #loadMore').html('Load More Results');
             });            
         }
     });
