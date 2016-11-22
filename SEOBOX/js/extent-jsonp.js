@@ -570,13 +570,14 @@ var page = 0;
 var limit = 1000;
 var totalLogs = limit;
 var id;
-
+var testName;
 	/* view test info [TEST] */
 $('.test').click(function () {
     var t = $(this);
     totalLogs = limit;
 	page = 0;
 	id = t.attr('extentid');
+	testName=t.find('div.test-head span.test-name').text();
     page = parseInt($('#testDataCount #pageNo').val('0').val());
     $('#test-collection .test').removeClass('active');
     $('#test-details-wrapper .test-body').html('');
@@ -594,6 +595,8 @@ $('.test').click(function () {
 });
 
 
+var host=$("div#testDataCount input#host").val();
+var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
 
 function fetchResults() {
 	$('.details-container #loadMore').html('<i class="material-icons left">loop</i> Loading Results...');	
@@ -603,25 +606,29 @@ function fetchResults() {
 		$('.details-container #loadMore').addClass('hide');		
 		return;
 	}
-
-	var url='/SEOBOX/FetchRecord?report='+$('#testDataCount #report').val()+'&id='+id+'&limit='+limit+'&skip='+page;
+	var url='http://'+host+':'+port+'/SEOBOX/'+$('#testDataCount #report').val()+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
     $.ajax({
         url: url,
         type: 'get',		
+		dataType: 'jsonp',
+		crossDomain: true,
+		jsonp: 'jsonp', 		
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
 			console.log('error', errorThrown);
 		},
-        success: function (result) {	
+        success: function (result) {
+			result=JSON.stringify(result);
+			result=result.substring(result.indexOf('({')+1,result.length);	
 			result=$.parseJSON(result);
-			totalLogs=Object.keys(result.logs).length;
+			totalLogs=result.total_rows;
             page = page + limit;            
 			if(totalLogs<limit){
 				$('.details-container #loadMore').addClass('hide');
 			}
 			$('.details-container #loadMore').attr('data-clickable', 'true');
 			$('.details-container #loadMore').html('Load More Results');
-            $.each(result.logs, function (index, log) {   
-				log=$.parseJSON(log);
+            $.each(result.rows, function (index, log) {   
+			//	log=$.parseJSON(log);
                 $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
                 var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
                 $('.details-container .test-body .test-steps table.table-results tbody tr:last-child').html(ic);	
