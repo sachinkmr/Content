@@ -188,21 +188,11 @@ function _adjustSize() {
         });
     else
         ct.find('._addedCell2').css({
-            'width': Math.round($(window).width() - 45 - 18 - ct.find('._addedCell1').width()) + 'px'
+            'width': Math.round($(window).width() - 5 - ct.find('._addedCell1').width()) + 'px'
         });
 
-    _restrictSize();
 }
 
-function _restrictSize() {
-    var cell = ct.find('._addedCell1');
-    if (cell.width() > Math.round($(window).width() * 0.6)) {
-        cell.css({
-            'width': Math.round($(window).width() * 0.6) + 'px'
-        });
-        _adjustSize();
-    }
-}
 
 function detectIE() {
     var ua = window.navigator.userAgent;
