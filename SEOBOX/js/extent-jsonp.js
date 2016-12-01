@@ -636,3 +636,35 @@ function fetchResults() {
         }
     });
 }
+//google page speed
+$(".googlePageSpeed").click(function(){
+		var url='http://'+host+':'+port+'/SEOBOX/pageSpeed/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
+    $.ajax({
+        url: url,
+        type: 'get',		
+		dataType: 'jsonp',
+		crossDomain: true,
+		jsonp: 'jsonp', 		
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			console.log('error', errorThrown);
+		},
+        success: function (result) {
+			result=JSON.stringify(result);
+			result=result.substring(result.indexOf('({')+1,result.length);	
+			result=$.parseJSON(result);
+			totalLogs=result.total_rows;
+            page = page + limit;            
+			if(totalLogs<limit){
+				$('.details-container #loadMore').addClass('hide');
+			}
+			$('.details-container #loadMore').attr('data-clickable', 'true');
+			$('.details-container #loadMore').html('Load More Results');
+            $.each(result.rows, function (index, log) {   
+			//	log=$.parseJSON(log);
+                $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
+                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
+                $('.details-container .test-body .test-steps table.table-results tbody tr:last-child').html(ic);	
+            });            
+        }
+    });		
+});
