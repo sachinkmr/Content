@@ -1,6 +1,6 @@
 /* current view */
 var currentView = 0;
-
+ 
 /* counts */
 var totalTests, passedTests, failedTests, fatalTests, warningTests, errorTests, skippedTests, unknownTests;
 var totalSteps, passedSteps, failedSteps, fatalSteps, warningSteps, errorSteps, infoSteps, skippedSteps, unknownSteps;
