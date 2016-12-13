@@ -621,7 +621,7 @@ function fetchResults() {
 			//	log=$.parseJSON(log);
                 $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
                 var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
-                $('.details-container .test-body .test-steps table.table-results tbody tr:last-child').html(ic);	
+                $('.details-container .test-body .test-steps table.table-results tbody >tr:last-child').html(ic);	
             });            
         }
     });
