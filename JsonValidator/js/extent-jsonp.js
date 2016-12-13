@@ -619,9 +619,9 @@ function fetchResults() {
 			$('.details-container #loadMore').html('Load More Results');
             $.each(result.rows, function (index, log) {   
 			//	log=$.parseJSON(log);
-                $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
+                var tr=$('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
                 var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
-                $('.details-container .test-body .test-steps table.table-results tbody >tr:last-child').html(ic);	
+                $(tr).html(ic);	
             });            
         }
     });
