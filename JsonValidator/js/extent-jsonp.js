@@ -508,7 +508,7 @@ function formatDt(d) {
 function findTestByNameId(name, id) {
     $('.test').each(function () {
         var t = $(this);
-        if (t.find('.test-name').text().trim() == name) {
+        if (t.find('.test-name').text().trim() == name || t.attr('extentid') == id) {
             $('.analysis > .test-view').click();
             t.click();
             return;
