@@ -636,9 +636,9 @@ function initDetails(){
 		$.each(json,function (index, table){
 			var appendData="<p><b>Error "+index+":</b></p><div class='dataTable'><table class='responsive-table striped'><tbody></tbody></table></div>";
 			$(node).append(appendData);
-			$.each(table,function (key, value){
+			$.each(this,function (key, value){
 				var r="<tr><td>"+key+"</td><td>"+value+"</td></tr>"
-				$(node).find('table tbody:last-child').append(r);
+				$($(node).find('table:last-child tbody')[$(node).find('table:last-child tbody').length-1]).append(r);
 			});
 		});
 	});
