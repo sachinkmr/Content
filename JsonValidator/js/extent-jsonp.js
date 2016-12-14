@@ -380,7 +380,6 @@ $('.step-filters').click(function (evt) {
     var cls = $(evt.target).parent().attr('status');
     if (cls.indexOf('clear') < 0) {
         $('.details-container').find('tbody > tr').removeClass('displayed hide');
-
         $('.details-container td.status.' + cls).parent().addClass('displayed');
         $('.details-container tbody > tr').not('.displayed').addClass('hide');
     }
@@ -509,7 +508,7 @@ function formatDt(d) {
 function findTestByNameId(name, id) {
     $('.test').each(function () {
         var t = $(this);
-        if (t.find('.test-name').text().trim() == name && t.attr('extentid') == id) {
+        if (t.find('.test-name').text().trim() == name) {
             $('.analysis > .test-view').click();
             t.click();
             return;
