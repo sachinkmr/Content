@@ -575,15 +575,15 @@ $('.test').click(function () {
     $('#test-details-wrapper .details-name').html(t.find('.test-name').html());
     $('#test-details-wrapper .details-container').append($(el));
     $('.details-container .test-body .test-steps table.table-results').css('display', 'table');   
-	 
+	
 	$('.details-container #loadMore').bind('click', function(){
 		if($(this).attr('data-clickable')=='true'){
 			fetchResults();
 		}
 	});
     fetchResults();
+	
 });
-
 
 var host=$("div#testDataCount input#host").val();
 var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
@@ -622,7 +622,24 @@ function fetchResults() {
                 $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
                 var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
                 $('.details-container .test-body .test-steps table.table-results >tbody >tr:last-child').html(ic);	
-            });            
+            });  
+			initDetails();			
         }
     });
+}
+function initDetails(){	
+	$('.modal-trigger').leanModal();
+	$('.stepDetails').click(function () {	
+		var node=$('div#modal1 div.modal-content>p');
+		$(node).html('');
+		var json=$.parseJSON($(this).siblings(".errorData").text());
+		$.each(json,function (index, table){
+			var appendData="<p><b>Error "+index+":</b></p><div class='dataTable'><table class='responsive-table striped'><tbody></tbody></table></div>";
+			$(node).append(appendData);
+			$.each(table,function (key, value){
+				var r="<tr><td>"+key+"</td><td>"+value+"</td></tr>"
+				$(node).find('table tbody:last-child').append(r);
+			});
+		});
+	});
 }
