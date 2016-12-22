@@ -679,7 +679,7 @@ function fetchURLs(pageType){
 		return;
 	}
 	//var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
-	var url='http://'+host+':8080/JSONServices/FetchUrls?report='+$('#testDataCount #report').val()+'&pageType='+pageType;
+	var url='http://'+host+':8088/JSONServices/FetchUrls?report='+$('#testDataCount #report').val()+'&pageType='+pageType;
 	$.ajax({
         url: url,
         type: 'get',		
@@ -740,7 +740,7 @@ function initDetails(){
 
 function fetchTestCases(dataUrl,pageType){
 //	var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&filter_url='+dataUrl;
-	var url='http://'+host+':8080/JSONServices/FetchTestCases?report='+$('#testDataCount #report').val()+'&pageType='+pageType+'&url='+dataUrl;
+	var url='http://'+host+':8088/JSONServices/FetchTestCases?report='+$('#testDataCount #report').val()+'&pageType='+pageType+'&url='+dataUrl;
 	$('#url-details-wrapper .urlDetailDiv div.pageUrl span.data-url').text(dataUrl);
 	$.ajax({
         url: url,
@@ -772,7 +772,7 @@ function fetchTestCases(dataUrl,pageType){
 
 function getURLs(){	
 	//var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
-	var url='http://'+host+':8080/JSONServices/getUrlsAndPageType?report='+$('#testDataCount #report').val();
+	var url='http://'+host+':8088/JSONServices/getUrlsAndPageType?report='+$('#testDataCount #report').val();
 	$.ajax({
         url: url,
         type: 'get',		
