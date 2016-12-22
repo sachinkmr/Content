@@ -797,9 +797,10 @@ function getURLs(){
 }
 
 $('.category-summary-view .pageCates').click(function(){	
+	$('.analysis >.urls-view').click();
 	var label=$(this).text().trim();
 	$('.exception-item .url-name').filter(function(){
 		return $($(this).text().trim()==label);
 	}).click();
-	$('.analysis >.urls-view').click();
+	
 });
