@@ -518,7 +518,9 @@ $(document).ready(function () {
    $('li.exception-item:first-child').click();
 });
 
-
+$('.analysis >.urls-view').click(function(){
+	$('li.exception-item:first-child').click();
+});
 
 /* action to perform when 'Clear Filters' option is selected [TEST] */
 function resetFilters(cb) {
