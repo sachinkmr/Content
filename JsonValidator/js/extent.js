@@ -1,9 +1,11 @@
 /* current view */
 var currentView = 0;
-
+ 
 /* counts */
 var totalTests, passedTests, failedTests, fatalTests, warningTests, errorTests, skippedTests, unknownTests;
 var totalSteps, passedSteps, failedSteps, fatalSteps, warningSteps, errorSteps, infoSteps, skippedSteps, unknownSteps;
+var host=$("div#testDataCount input#host").val();
+var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
 
 totalTests = $('div#testDataCount input#totalTests').val().replace(/,/g, "");
 passedTests = $('div#testDataCount input#passedTests').val().replace(/,/g, "");
@@ -159,7 +161,7 @@ function _updateCurrentStage(n) {
     } else if (n == 1)
         ct = $('#categories-view');
     else if (n == 2)
-        ct = $('#exceptions-view');
+        ct = $('#urls-view');
     else
         return;
 
@@ -188,21 +190,11 @@ function _adjustSize() {
         });
     else
         ct.find('._addedCell2').css({
-            'width': Math.round($(window).width() - 45 - 18 - ct.find('._addedCell1').width()) + 'px'
+            'width': Math.round($(window).width() - 5 - ct.find('._addedCell1').width()) + 'px'
         });
 
-    _restrictSize();
 }
 
-function _restrictSize() {
-    var cell = ct.find('._addedCell1');
-    if (cell.width() > Math.round($(window).width() * 0.6)) {
-        cell.css({
-            'width': Math.round($(window).width() * 0.6) + 'px'
-        });
-        _adjustSize();
-    }
-}
 
 function detectIE() {
     var ua = window.navigator.userAgent;
@@ -230,6 +222,8 @@ function detectIE() {
     return false;
 }
 
+// for populating urls on dashboard
+getURLs();
 
 /* side-nav navigation [SIDE-NAV] */
 $('.analysis').click(function () {
@@ -268,6 +262,27 @@ $('.category-item').click(function (evt) {
     var el = $(this).addClass('active').find('.cat-body').clone();
     $('#cat-details-wrapper .cat-name').text($(this).find('.category-name').text());
     $('#cat-details-wrapper .cat-container').append($(el));
+});
+
+/* view URLS info [URLS] */
+var pageUrl = 0;
+var limitUrl=1000;
+var totalLogsUrl = limitUrl;
+$('.exception-item').click(function () {	
+ pageUrl = 0;
+ totalLogsUrl = limitUrl;
+    $('#url-collection .exception-item').removeClass('active');
+    var el = $(this).addClass('active');
+	$('#url-details-wrapper').html('');
+	$('#url-details-wrapper').html($('.URLContent .contents').clone());
+	$('#url-details-wrapper h5').text($.trim($(el).text()));	
+	pageType=$(el).text();
+	$('.url-details-wrapper #loadMoreURLs').bind('click', function(){
+		if($(this).attr('data-clickable')=='true'){
+			 fetchURLs(pageType);
+		}
+	});
+    fetchURLs(pageType);	
 });
 
 /* category filter by status */
@@ -375,12 +390,16 @@ $('#test-details-wrapper').click(function (evt) {
 
     if (el.hasClass('category')) {
         var label = el.text();
-
+		
+		
+/*
         $('#category-toggle a').filter(
                 function () {
                     return ($(this).text() == label);
                 }).click();
+				*/
     }
+	
 });
 
 /* toggle steps by status in details container */
@@ -390,7 +409,6 @@ $('.step-filters').click(function (evt) {
     var cls = $(evt.target).parent().attr('status');
     if (cls.indexOf('clear') < 0) {
         $('.details-container').find('tbody > tr').removeClass('displayed hide');
-
         $('.details-container td.status.' + cls).parent().addClass('displayed');
         $('.details-container tbody > tr').not('.displayed').addClass('hide');
     }
@@ -456,7 +474,7 @@ $(document).ready(function () {
     /* init */
     $('select').material_select();
     /* select the first category item in categories view by default */
-    $('.category-item').eq(0).click();
+    $('.category-item').eq(0).click();	
     /* select the first test in test's view by default */
     $('.test').eq(0).click();
     /* bind the search functionality on Tests, Categories and Exceptions view */
@@ -475,8 +493,8 @@ $(document).ready(function () {
 	var stepChart = new Chart(ctx1).Doughnut(data1, options);
 	drawLegend(stepChart, 'step-analysis');
 	$('li.analysis.waves-effect.active').click();
-	var total = $('.total-tests .panel-lead').text();
-	var passed = $('.t-pass-count').text();
+	var total = $('.total-tests .panel-lead').text().replace(/,/g, "");
+	var passed = $('.t-pass-count').text().replace(/,/g, "");
 	var percentage = Math.round((passed * 100) / (total));
 	var pieData = [{
         value: percentage,
@@ -496,8 +514,10 @@ $(document).ready(function () {
 	$('#dashboard-view .determinate').attr('style', 'width:' + percentage + '%');
 	/*----- Charts Ends  ----*/
 //document.getElementById('tries').scrollIntoView()
-
+	/* select the first category item in URLs view by default */
+   $('li.exception-item:first-child').click();
 });
+
 
 
 /* action to perform when 'Clear Filters' option is selected [TEST] */
@@ -519,7 +539,7 @@ function formatDt(d) {
 function findTestByNameId(name, id) {
     $('.test').each(function () {
         var t = $(this);
-        if (t.find('.test-name').text().trim() == name && t.attr('extentid') == id) {
+        if (t.find('.test-name').text().trim() == name || t.attr('extentid') == id) {
             $('.analysis > .test-view').click();
             t.click();
             return;
@@ -565,70 +585,221 @@ function drawLegend(chart, id) {
     $('#' + id).after(legendHolder.firstChild);
 }
 
+// binding click functions of test attrinute in test body
+function bindCategoryClick(){
+	$('.test-attributes .categories .category').click(function(){
+		var label=$(this).text();
+	$('.test-steps .step-name .cate').filter(function(){
+      return ($(this).text() == label);
+    }).wrap('<mark class="hightlighted"></mark>');
+	$('.hightlighted').css('padding','1px 2px');
+});
+	
+}
 
-var page = parseInt($('#testDataCount #pageNo').val('0').val());
-var limit = 200;
+
+var page = 0;
+var limit = 1000;
 var totalLogs = limit;
 var id;
-
+var testName;
 	/* view test info [TEST] */
 $('.test').click(function () {
     var t = $(this);
     totalLogs = limit;
+	page = 0;
 	id = t.attr('extentid');
+	testName=t.find('div.test-head span.test-name').text();
     page = parseInt($('#testDataCount #pageNo').val('0').val());
     $('#test-collection .test').removeClass('active');
     $('#test-details-wrapper .test-body').html('');
     var el = t.addClass('active').find('.test-body').clone();
     $('#test-details-wrapper .details-name').html(t.find('.test-name').html());
     $('#test-details-wrapper .details-container').append($(el));
-    $('.details-container .test-body .test-steps table.table-results').css('display', 'table');   
-	
+    $('.details-container .test-body .test-steps table.table-results').css('display', 'table');   	
 	$('.details-container #loadMore').bind('click', function(){
 		if($(this).attr('data-clickable')=='true'){
 			fetchResults();
 		}
 	});
     fetchResults();
+	bindCategoryClick();
 });
 
-var host=$("div#testDataCount input#dbhost").val();
-var port=parseInt($("div#testDataCount input#dbport").val().replace(/,/g, ""));
+
 
 function fetchResults() {
 	$('.details-container #loadMore').html('<i class="material-icons left">loop</i> Loading Results...');	
 	$('.details-container #loadMore').attr('data-clickable', 'false');
 	$('.details-container #loadMore').removeClass('hide');
-	if(totalLogs<limit){		
+	if(totalLogs<limit){
+		$('.details-container #loadMore').addClass('hide');		
 		return;
 	}
-	var url='http://'+host+':'+port+'/'+$('#testDataCount #report').val()+'/'+id+'/?limit='+limit+'&skip='+page;
+	var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
     $.ajax({
         url: url,
-        type: 'get',
+        type: 'get',		
 		dataType: 'jsonp',
 		crossDomain: true,
-		jsonp: 'jsonp', 
+		jsonp: 'jsonp', 		
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
 			console.log('error', errorThrown);
 		},
         success: function (result) {
 			result=JSON.stringify(result);
-			result=result.substring(result.indexOf('({')+1,result.length);			
+			result=result.substring(result.indexOf('({')+1,result.length);	
 			result=$.parseJSON(result);
 			totalLogs=result.total_rows;
-            page = page + limit;
-            $('#testDataCount #pageNo').val(page);
-            $.each(result.rows, function (index, log) {               
+            page = page + limit;            
+			if(totalLogs<limit){
+				$('.details-container #loadMore').addClass('hide');
+			}
+			$('.details-container #loadMore').attr('data-clickable', 'true');
+			$('.details-container #loadMore').html('Load More Results');
+            $.each(result.rows, function (index, log) {   
+			//	log=$.parseJSON(log); <td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td>
                 $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
-                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
-                $('.details-container .test-body .test-steps table.table-results tbody tr:last-child').html(ic);	
-				if(totalLogs<limit){
-					$('.details-container #loadMore').addClass('hide');
-				}
-				$('.details-container #loadMore').attr('data-clickable', 'true');
-				$('.details-container #loadMore').html('Load More Results');
-            });            
+                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
+                $('.details-container .test-body .test-steps table.table-results >tbody >tr:last-child').html(ic);	
+            });  
+			initDetails();			
         }
     });
 }
+
+
+function fetchURLs(pageType){
+	pageType=jQuery.trim( pageType );
+	$('#url-details-wrapper #loadMoreURLs').html('<i class="material-icons left">loop</i> Loading Results...');	
+	$('#url-details-wrapper #loadMoreURLs').attr('data-clickable', 'false');
+	$('#url-details-wrapper #loadMoreURLs').removeClass('hide');
+	if(totalLogsUrl<limitUrl){
+		$('#url-details-wrapper #loadMoreURLs').addClass('hide');		
+		return;
+	}
+	//var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
+	var url='http://'+host+':8080/JSONServices/FetchUrls?report='+$('#testDataCount #report').val()+'&pageType='+pageType;
+	$.ajax({
+        url: url,
+        type: 'get',		
+		dataType: 'jsonp',
+		crossDomain: true,
+		jsonp: 'jsonp', 		
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			console.log('error', errorThrown);
+		},
+        success: function (result) {
+			result=JSON.stringify(result);
+			result=result.substring(result.indexOf('({')+1,result.length);	
+			result=$.parseJSON(result);
+			totalLogsUrl=result.total_rows;
+            pageUrl = pageUrl + limitUrl;     
+            $.each(result.rows, function (index, log) { 
+				$('#url-details-wrapper .urls-cat-container table tbody').append('<tr></tr>');
+				$('#url-details-wrapper .urls-cat-container table tbody >tr:last-child').html("<td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td><td>" + log.url + "</td><td><a href='#' data-url='"+log.url+"' class='urlDetail'>View Details</a></td>");	
+			});  
+			$('#url-details-wrapper .urls-cat-container a.urlDetail').click(function(){
+				$('#url-details-wrapper .urls-header .url-close').removeClass('hide');
+				$('#url-details-wrapper .urls-cat-container').addClass('hide');
+				$('#url-details-wrapper .urlDetailDiv').removeClass('hide');	
+					fetchTestCases($(this).attr('data-url'),pageType);
+			});
+			$('#url-details-wrapper .urls-header .url-close').click(function(){
+				$('#url-details-wrapper .urls-header .url-close').addClass('hide');
+				$('#url-details-wrapper .urls-cat-container').removeClass('hide');
+				$('#url-details-wrapper .urlDetailDiv').addClass('hide');
+			});			
+			if(totalLogsUrl<limitUrl){
+				$('#url-details-wrapper #loadMoreURLs').addClass('hide');
+			}
+			$('#url-details-wrapper #loadMoreURLs').attr('data-clickable', 'true');
+			$('#url-details-wrapper #loadMoreURLs').html('Load More Results');			
+		}		
+    });
+	
+}
+
+function initDetails(){	
+	$('.modal-trigger').leanModal();
+	$('.stepDetails').click(function () {	
+		var node=$('div#modal1 div.modal-content>p');
+		$(node).html('');
+		var json=$.parseJSON($(this).siblings(".errorData").text());
+		$.each(json,function (index, table){
+			var appendData="<p><b>Error "+index+":</b></p><div class='dataTable'><table class='responsive-table striped'><tbody></tbody></table></div>";
+			$(node).append(appendData);
+			$.each(this,function (key, value){
+				var r="<tr><td>"+key+"</td><td>"+value+"</td></tr>"
+				$($(node).find('table:last-child tbody')[$(node).find('table:last-child tbody').length-1]).append(r);
+			});
+		});
+	});
+}
+
+
+function fetchTestCases(dataUrl,pageType){
+//	var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&filter_url='+dataUrl;
+	var url='http://'+host+':8080/JSONServices/FetchTestCases?report='+$('#testDataCount #report').val()+'&pageType='+pageType+'&url='+dataUrl;
+	$('#url-details-wrapper .urlDetailDiv div.pageUrl span.data-url').text(dataUrl);
+	$.ajax({
+        url: url,
+        type: 'get',		
+		dataType: 'jsonp',
+		crossDomain: true,
+		jsonp: 'jsonp', 		
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			console.log('error', errorThrown);
+		},
+        success: function (result) {
+			$('#url-details-wrapper .urlDetailDiv table tbody').html('');			
+			result=JSON.stringify(result);
+			result=result.substring(result.indexOf('({')+1,result.length);	
+			result=$.parseJSON(result);
+            $.each(result.rows, function (index, log) { 	
+				var str=log.step+"";
+				str=str.substr(0,str.indexOf("Content Type"))+"Component: </b>"+log.test_name;
+				var ic = "<td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + str + "</td><td class='step-details'>" + log.detail + "</td>";	
+				$('#url-details-wrapper .urlDetailDiv table tbody').append('<tr></tr>');
+                $('#url-details-wrapper .urlDetailDiv table >tbody >tr:last-child').html(ic);	
+			});  
+			initDetails();
+			
+		}		
+    });
+}
+
+
+function getURLs(){	
+	//var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
+	var url='http://'+host+':8080/JSONServices/getUrlsAndPageType?report='+$('#testDataCount #report').val();
+	$.ajax({
+        url: url,
+        type: 'get',		
+		dataType: 'jsonp',
+		crossDomain: true,
+		jsonp: 'jsonp', 		
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			console.log('error', errorThrown);
+		},
+        success: function (result) {
+			result=JSON.stringify(result);
+			result=result.substring(result.indexOf('({')+1,result.length);	
+			result=$.parseJSON(result);
+            $.each(result.rows, function (index, log) { 
+				var tr=$('.category-summary-view table tbody tr').filter(function (){
+					return ($(this).attr('data-name')==log.pageType);
+				});
+				$(tr).find('td#urlCount').text(log.urls);
+			}); 
+		}		
+    });
+}
+
+$('.category-summary-view .pageCates').click(function(){	
+	var label=$(this).text().trim();
+	$('.exception-item .url-name').filter(function(){
+		return $($(this).text().trim()==label);
+	}).click();
+	$('.analysis >.urls-view').click();
+});
