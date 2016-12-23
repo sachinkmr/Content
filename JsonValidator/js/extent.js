@@ -636,7 +636,7 @@ function fetchURLs(pageType){
 			result=$.parseJSON(result);			 
             $.each(result.rows, function (index, log) { 
 				$('#url-details-wrapper .urls-cat-container table tbody').append('<tr></tr>');
-				$('#url-details-wrapper .urls-cat-container table tbody >tr:last-child').html("<td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td><td><a href='#' data-url='"+log.url+"' class='urlDetail'>" + log.url + "</a></td><td><span class='status label skip'>"+log.skip+"</span> <span class='status label fail'>"+log.fail+"</span> <span class='status label pass'>"+log.pass+"</span> </td>");	
+				$('#url-details-wrapper .urls-cat-container table tbody >tr:last-child').html("<td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td><td><a href='#' data-url='"+log.url+"' class='urlDetail'>" + log.url + "</a></td><td> <span class='status label pass' title='Passed'>"+log.pass+"</span> <span class='status label fail' title='Failed'>"+log.fail+"</span> <span class='status label skip' title='Skipped'>"+log.skip+"</span></td>");	
 			});  
 			$('#url-details-wrapper .urls-cat-container a.urlDetail').click(function(){
 				$('#url-details-wrapper .urls-header .url-close').removeClass('hide');
