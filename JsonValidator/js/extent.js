@@ -4,8 +4,6 @@ var currentView = 0;
 /* counts */
 var totalTests, passedTests, failedTests, fatalTests, warningTests, errorTests, skippedTests, unknownTests;
 var totalSteps, passedSteps, failedSteps, fatalSteps, warningSteps, errorSteps, infoSteps, skippedSteps, unknownSteps;
-var host=$("div#testDataCount input#host").val();
-var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
 
 totalTests = $('div#testDataCount input#totalTests').val().replace(/,/g, "");
 passedTests = $('div#testDataCount input#passedTests').val().replace(/,/g, "");
@@ -222,8 +220,7 @@ function detectIE() {
     return false;
 }
 
-// for populating urls on dashboard
-getURLs();
+
 
 /* side-nav navigation [SIDE-NAV] */
 $('.analysis').click(function () {
@@ -264,13 +261,7 @@ $('.category-item').click(function (evt) {
     $('#cat-details-wrapper .cat-container').append($(el));
 });
 
-/* view URLS info [URLS] */
-var pageUrl = 0;
-var limitUrl=1000;
-var totalLogsUrl = limitUrl;
 $('.exception-item').click(function () {	
- pageUrl = 0;
- totalLogsUrl = limitUrl;
     $('#url-collection .exception-item').removeClass('active');
     var el = $(this).addClass('active');
 	$('#url-details-wrapper').html('');
@@ -470,57 +461,6 @@ $('#clear-filters').click(function () {
     resetFilters();
 });
 
-$(document).ready(function () {
-    /* init */
-    $('select').material_select();
-    /* select the first category item in categories view by default */
-    $('.category-item').eq(0).click();	
-    /* select the first test in test's view by default */
-    $('.test').eq(0).click();
-    /* bind the search functionality on Tests, Categories and Exceptions view */
-    $('#test-collection .test').dynamicTestSearch('#test-view #searchTests');
-    $('#cat-collection .category-item').dynamicTestSearch('#categories-view #searchTests');
-    /* if only header row is available for test, hide the table [TEST] */
-    $('.table-results').filter(function () {
-        return ($(this).find('tr').length == 1);
-    }).hide(0);
-    $('.details-container .test-body .test-steps table.table-results').css('display', 'table');
-	/*----- Charts   ----*/
-	var ctx2 = $('#test-analysis').get(0).getContext('2d');
-	var testChart = new Chart(ctx2).Doughnut(data, options);
-	drawLegend(testChart, 'test-analysis');
-	var ctx1 = $('#step-analysis').get(0).getContext('2d');
-	var stepChart = new Chart(ctx1).Doughnut(data1, options);
-	drawLegend(stepChart, 'step-analysis');
-	$('li.analysis.waves-effect.active').click();
-	var total = $('.total-tests .panel-lead').text().replace(/,/g, "");
-	var passed = $('.t-pass-count').text().replace(/,/g, "");
-	var percentage = Math.round((passed * 100) / (total));
-	var pieData = [{
-        value: percentage,
-        color: "#3F9F3F",
-        label: 'Passed'
-    },
-    {
-        value: 100 - percentage,
-        color: "#eceff5",
-        label: 'Failed'
-    }];
-	var ctx = $('#percentage').get(0).getContext('2d');
-	var stepChart1 = new Chart(ctx).Doughnut(pieData, options);
-	drawLegend(stepChart1, 'percentage');
-	$('ul.doughnut-legend').addClass('right');
-	$('.pass-percentage.panel-lead').text(percentage + '%');
-	$('#dashboard-view .determinate').attr('style', 'width:' + percentage + '%');
-	/*----- Charts Ends  ----*/
-//document.getElementById('tries').scrollIntoView()
-	/* select the first category item in URLs view by default */
-   $('li.exception-item:first-child').click();
-});
-
-$('.analysis >.urls-view').click(function(){
-	$('li.exception-item:first-child').click();
-});
 
 /* action to perform when 'Clear Filters' option is selected [TEST] */
 function resetFilters(cb) {
@@ -638,7 +578,9 @@ function fetchResults() {
 		$('.details-container #loadMore').addClass('hide');		
 		return;
 	}
-	var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
+	//var url='http://localhost:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
+	var url='http://localhost:8080/JSONServices/FetchResults?report='+$('#testDataCount #report').val()+'&test_name='+testName+'&limit='+limit+'&skip='+page;
+	
     $.ajax({
         url: url,
         type: 'get',		
@@ -646,7 +588,7 @@ function fetchResults() {
 		crossDomain: true,
 		jsonp: 'jsonp', 		
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log('error', errorThrown);
+			console.error( errorThrown);
 		},
         success: function (result) {
 			result=JSON.stringify(result);
@@ -676,12 +618,9 @@ function fetchURLs(pageType){
 	$('#url-details-wrapper #loadMoreURLs').html('<i class="material-icons left">loop</i> Loading Results...');	
 	$('#url-details-wrapper #loadMoreURLs').attr('data-clickable', 'false');
 	$('#url-details-wrapper #loadMoreURLs').removeClass('hide');
-	if(totalLogsUrl<limitUrl){
-		$('#url-details-wrapper #loadMoreURLs').addClass('hide');		
-		return;
-	}
-	//var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
-	var url='http://'+host+':8088/JSONServices/FetchUrls?report='+$('#testDataCount #report').val()+'&pageType='+pageType;
+	
+	//var url='http://localhost:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
+	var url='http://localhost:8080/JSONServices/FetchUrls?report='+$('#testDataCount #report').val()+'&pageType='+pageType;
 	$.ajax({
         url: url,
         type: 'get',		
@@ -689,17 +628,15 @@ function fetchURLs(pageType){
 		crossDomain: true,
 		jsonp: 'jsonp', 		
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log('error', errorThrown);
+			console.error( errorThrown);
 		},
         success: function (result) {
 			result=JSON.stringify(result);
 			result=result.substring(result.indexOf('({')+1,result.length);	
-			result=$.parseJSON(result);
-			totalLogsUrl=result.total_rows;
-            pageUrl = pageUrl + limitUrl;     
+			result=$.parseJSON(result);			 
             $.each(result.rows, function (index, log) { 
 				$('#url-details-wrapper .urls-cat-container table tbody').append('<tr></tr>');
-				$('#url-details-wrapper .urls-cat-container table tbody >tr:last-child').html("<td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td><td>" + log.url + "</td><td><a href='#' data-url='"+log.url+"' class='urlDetail'>View Details</a></td>");	
+				$('#url-details-wrapper .urls-cat-container table tbody >tr:last-child').html("<td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td><td><a href='#' data-url='"+log.url+"' class='urlDetail'>" + log.url + "</a></td><td><span class='status label skip'>"+log.skip+"</span> <span class='status label fail'>"+log.fail+"</span> <span class='status label pass'>"+log.pass+"</span> </td>");	
 			});  
 			$('#url-details-wrapper .urls-cat-container a.urlDetail').click(function(){
 				$('#url-details-wrapper .urls-header .url-close').removeClass('hide');
@@ -712,9 +649,7 @@ function fetchURLs(pageType){
 				$('#url-details-wrapper .urls-cat-container').removeClass('hide');
 				$('#url-details-wrapper .urlDetailDiv').addClass('hide');
 			});			
-			if(totalLogsUrl<limitUrl){
-				$('#url-details-wrapper #loadMoreURLs').addClass('hide');
-			}
+			$('#url-details-wrapper #loadMoreURLs').addClass('hide');
 			$('#url-details-wrapper #loadMoreURLs').attr('data-clickable', 'true');
 			$('#url-details-wrapper #loadMoreURLs').html('Load More Results');			
 		}		
@@ -741,8 +676,8 @@ function initDetails(){
 
 
 function fetchTestCases(dataUrl,pageType){
-//	var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&filter_url='+dataUrl;
-	var url='http://'+host+':8088/JSONServices/FetchTestCases?report='+$('#testDataCount #report').val()+'&pageType='+pageType+'&url='+dataUrl;
+//	var url='http://localhost:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&filter_url='+dataUrl;
+	var url='http://localhost:8080/JSONServices/FetchTestCases?report='+$('#testDataCount #report').val()+'&pageType='+pageType+'&url='+dataUrl;
 	$('#url-details-wrapper .urlDetailDiv div.pageUrl span.data-url').text(dataUrl);
 	$.ajax({
         url: url,
@@ -751,7 +686,7 @@ function fetchTestCases(dataUrl,pageType){
 		crossDomain: true,
 		jsonp: 'jsonp', 		
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log('error', errorThrown);
+			console.error( errorThrown);
 		},
         success: function (result) {
 			$('#url-details-wrapper .urlDetailDiv table tbody').html('');			
@@ -765,16 +700,15 @@ function fetchTestCases(dataUrl,pageType){
 				$('#url-details-wrapper .urlDetailDiv table tbody').append('<tr></tr>');
                 $('#url-details-wrapper .urlDetailDiv table >tbody >tr:last-child').html(ic);	
 			});  
-			initDetails();
-			
+			initDetails();			
 		}		
     });
 }
 
 
 function getURLs(){	
-	//var url='http://'+host+':'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
-	var url='http://'+host+':8088/JSONServices/getUrlsAndPageType?report='+$('#testDataCount #report').val();
+	//var url='http://localhost:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
+	var url='http://localhost:8080/JSONServices/getUrlsAndPageType?report='+$('#testDataCount #report').val();
 	$.ajax({
         url: url,
         type: 'get',		
@@ -782,7 +716,7 @@ function getURLs(){
 		crossDomain: true,
 		jsonp: 'jsonp', 		
 		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log('error', errorThrown);
+			console.error( errorThrown);
 		},
         success: function (result) {
 			result=JSON.stringify(result);
@@ -798,11 +732,61 @@ function getURLs(){
     });
 }
 
-$('.category-summary-view .pageCates').click(function(){	
-	$('.analysis >.urls-view').click();
-	var label=$(this).text().trim();
+$('.category-summary-view .pageCates').click(function(){		
+	var label=$(this).text();
 	$('.exception-item .url-name').filter(function(){
-		return $($(this).text().trim()==label);
+		return ($(this).text()==label);
 	}).click();
+	$('.analysis >.urls-view').click();
+});
+
+$(document).ready(function () {
+    /* init */
+    $('select').material_select();
+    /* select the first category item in categories view by default */
+    $('.category-item').eq(0).click();	
+    /* select the first test in test's view by default */
+    $('.test').eq(0).click();
+    /* bind the search functionality on Tests, Categories and Exceptions view */
+    $('#test-collection .test').dynamicTestSearch('#test-view #searchTests');
+    $('#cat-collection .category-item').dynamicTestSearch('#categories-view #searchTests');
+    /* if only header row is available for test, hide the table [TEST] */
+    $('.table-results').filter(function () {
+        return ($(this).find('tr').length == 1);
+    }).hide(0);
+    $('.details-container .test-body .test-steps table.table-results').css('display', 'table');
+	/*----- Charts   ----*/
+	var ctx2 = $('#test-analysis').get(0).getContext('2d');
+	var testChart = new Chart(ctx2).Doughnut(data, options);
+	drawLegend(testChart, 'test-analysis');
+	var ctx1 = $('#step-analysis').get(0).getContext('2d');
+	var stepChart = new Chart(ctx1).Doughnut(data1, options);
+	drawLegend(stepChart, 'step-analysis');
+	$('li.analysis.waves-effect.active').click();
+	var total = $('.total-tests .panel-lead').text().replace(/,/g, "");
+	var passed = $('.t-pass-count').text().replace(/,/g, "");
+	var percentage = Math.round((passed * 100) / (total));
+	var pieData = [{
+        value: percentage,
+        color: "#3F9F3F",
+        label: 'Passed'
+    },
+    {
+        value: 100 - percentage,
+        color: "#eceff5",
+        label: 'Failed'
+    }];
+	var ctx = $('#percentage').get(0).getContext('2d');
+	var stepChart1 = new Chart(ctx).Doughnut(pieData, options);
+	drawLegend(stepChart1, 'percentage');
+	$('ul.doughnut-legend').addClass('right');
+	$('.pass-percentage.panel-lead').text(percentage + '%');
+	$('#dashboard-view .determinate').attr('style', 'width:' + percentage + '%');
+	/*----- Charts Ends  ----*/
+	
+	/* select the first category item in URLs view by default */
+   $('li.exception-item:first-child').click();
+   // for populating urls on dashboard
+	getURLs();
 	
 });
