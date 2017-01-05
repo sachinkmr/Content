@@ -579,7 +579,7 @@ function fetchResults() {
 		return;
 	}
 	//var url='http://10.207.60.191:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
-	var url='http://10.207.60.191:8088/JSONServices/FetchResults?report='+$('#testDataCount #report').val()+'&test_name='+testName+'&limit='+limit+'&skip='+page;
+	var url='http://10.207.16.9/JSON-Validator/FetchResults?report='+$('#testDataCount #report').val()+'&test_name='+testName+'&limit='+limit+'&skip='+page;
 	
     $.ajax({
         url: url,
@@ -620,7 +620,7 @@ function fetchURLs(pageType){
 	$('#url-details-wrapper #loadMoreURLs').removeClass('hide');
 	
 	//var url='http://10.207.60.191:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
-	var url='http://10.207.60.191:8088/JSONServices/FetchUrls?report='+$('#testDataCount #report').val()+'&pageType='+pageType;
+	var url='http://10.207.16.9/JSON-Validator/FetchUrls?report='+$('#testDataCount #report').val()+'&pageType='+pageType;
 	$.ajax({
         url: url,
         type: 'get',		
@@ -677,7 +677,7 @@ function initDetails(){
 
 function fetchTestCases(dataUrl,pageType){
 //	var url='http://10.207.60.191:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&filter_url='+dataUrl;
-	var url='http://10.207.60.191:8088/JSONServices/FetchTestCases?report='+$('#testDataCount #report').val()+'&pageType='+pageType+'&url='+dataUrl;
+	var url='http://10.207.16.9/JSON-Validator/FetchTestCases?report='+$('#testDataCount #report').val()+'&pageType='+pageType+'&url='+dataUrl;
 	$('#url-details-wrapper .urlDetailDiv div.pageUrl span.data-url').text(dataUrl);
 	$.ajax({
         url: url,
@@ -708,7 +708,7 @@ function fetchTestCases(dataUrl,pageType){
 
 function getURLs(){	
 	//var url='http://10.207.60.191:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_pageType='+pageType+'&limit='+limitUrl+'&skip='+pageUrl;
-	var url='http://10.207.60.191:8088/JSONServices/getUrlsAndPageType?report='+$('#testDataCount #report').val();
+	var url='http://10.207.16.9/JSON-Validator/getUrlsAndPageType?report='+$('#testDataCount #report').val();
 	$.ajax({
         url: url,
         type: 'get',		
