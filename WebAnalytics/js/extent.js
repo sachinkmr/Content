@@ -98,7 +98,7 @@ function _adjustSize() {
         'width': Math.round($(window).width() - 5 - ct.find('._addedCell1').width()) + 'px'
     });
     else ct.find('._addedCell2').css({
-        'width': Math.round($(window).width() - 45 - 18 - ct.find('._addedCell1').width()) + 'px'
+        'width': Math.round($(window).width() - 0 - 18 - ct.find('._addedCell1').width()) + 'px'
     });
 
     _restrictSize();
