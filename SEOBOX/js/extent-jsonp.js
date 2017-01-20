@@ -588,41 +588,45 @@ $('.test').click(function () {
 var host=$("div#testDataCount input#host").val();
 var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
 
+
 function fetchResults() {
-	$('.details-container #loadMore').html('<i class="material-icons left">loop</i> Loading Results...');	
-	$('.details-container #loadMore').attr('data-clickable', 'false');
-	$('.details-container #loadMore').removeClass('hide');
-	if(totalLogs<limit){
-		$('.details-container #loadMore').addClass('hide');		
-		return;
-	}
-	var url='http://'+host+':'+port+'/SEOBOX/'+$('#testDataCount #report').val()+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
+    $('.details-container #loadMore').html('<i class="material-icons left">loop</i> Loading Results...');
+    $('.details-container #loadMore').attr('data-clickable', 'false');
+    $('.details-container #loadMore').removeClass('hide');
+    if (totalLogs < limit) {
+        $('.details-container #loadMore').addClass('hide');
+        return;
+    }
+    //var url='http://10.207.60.191:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
+    var url = 'http://10.207.16.9/SEOBOX/FetchResults?report=' + $('#testDataCount #report').val() + '&test_name=' + testName + '&limit=' + limit + '&skip=' + page;
+
     $.ajax({
         url: url,
-        type: 'get',		
-		dataType: 'jsonp',
-		crossDomain: true,
-		jsonp: 'jsonp', 		
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log('error', errorThrown);
-		},
-        success: function (result) {
-			result=JSON.stringify(result);
-			result=result.substring(result.indexOf('({')+1,result.length);	
-			result=$.parseJSON(result);
-			totalLogs=result.total_rows;
-            page = page + limit;            
-			if(totalLogs<limit){
-				$('.details-container #loadMore').addClass('hide');
-			}
-			$('.details-container #loadMore').attr('data-clickable', 'true');
-			$('.details-container #loadMore').html('Load More Results');
-            $.each(result.rows, function (index, log) {   
-			//	log=$.parseJSON(log);
+        type: 'get',
+        dataType: 'jsonp',
+        crossDomain: true,
+        jsonp: 'jsonp',
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            console.error(errorThrown);
+        },
+        success: function(result) {
+            result = JSON.stringify(result);
+            result = result.substring(result.indexOf('({') + 1, result.length);
+            result = $.parseJSON(result);
+            totalLogs = result.total_rows;
+            page = page + limit;
+            if (totalLogs < limit) {
+                $('.details-container #loadMore').addClass('hide');
+            }
+            $('.details-container #loadMore').attr('data-clickable', 'true');
+            $('.details-container #loadMore').html('Load More Results');
+            $.each(result.rows, function(index, log) {
+                //	log=$.parseJSON(log); <td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td>
                 $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
-                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
-                $('.details-container .test-body .test-steps table.table-results tbody tr:last-child').html(ic);	
-            });            
+                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><div class='status label capitalize " + log.status.toLowerCase() + "'>" + log.status + "</div></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
+                $('.details-container .test-body .test-steps table.table-results >tbody >tr:last-child').html(ic);
+            });
+            
         }
     });
 }
