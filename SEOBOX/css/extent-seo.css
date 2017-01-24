@@ -10852,6 +10852,7 @@ header {
 /* -- [ collections ] -- */
 #test-collection, #cat-collection, #exception-collection {
 	margin: 0;
+	margin-bottom: 25px;
 }
 
 .test-collection {
