@@ -627,40 +627,31 @@ function fetchResults() {
                 $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
                 var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><div class='status label capitalize " + log.status.toLowerCase() + "'>" + log.status + "</div></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
                 $('.details-container .test-body .test-steps table.table-results >tbody >tr:last-child').html(ic);
-            });
-            
+			});
+            initpageSpeedModal();
         }
     });
 }
-//google page speed
-$(".googlePageSpeed").click(function(){
-		var url='http://'+host+':'+port+'/SEOBOX/pageSpeed/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
-    $.ajax({
-        url: url,
-        type: 'get',		
-		dataType: 'jsonp',
-		crossDomain: true,
-		jsonp: 'jsonp', 		
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log('error', errorThrown);
-		},
-        success: function (result) {
-			result=JSON.stringify(result);
-			result=result.substring(result.indexOf('({')+1,result.length);	
-			result=$.parseJSON(result);
-			totalLogs=result.total_rows;
-            page = page + limit;            
-			if(totalLogs<limit){
-				$('.details-container #loadMore').addClass('hide');
+function initpageSpeedModal(){	
+	$('.modal-trigger').leanModal();
+	$('a.googlePageSpeed').click(function () {	
+		var node=$('div#pageSpeedModal div.modal-content>p');
+		$(node).html('');
+		$.ajax({
+			url: 'http://localhost:8080/seobox-web/PageSpeedInsight?report='+ $('#testDataCount #report').val() + '&type='+$(this).attr('data-type')+'&key='+$(this).attr('data-key'),
+			type: 'get',
+			dataType: 'jsonp',
+			crossDomain: true,
+			jsonp: 'jsonp',
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				console.error(errorThrown);
+			},
+			success: function(result) {
+								
+				$.each(result.rows, function(index, log) {
+					$(node).html(log.data);
+				});
 			}
-			$('.details-container #loadMore').attr('data-clickable', 'true');
-			$('.details-container #loadMore').html('Load More Results');
-            $.each(result.rows, function (index, log) {   
-			//	log=$.parseJSON(log);
-                $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
-                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
-                $('.details-container .test-body .test-steps table.table-results tbody tr:last-child').html(ic);	
-            });            
-        }
-    });		
-});
+		});
+	});
+}
