@@ -585,8 +585,9 @@ $('.test').click(function () {
 });
 
 
-var host=$("div#testDataCount input#host").val();
-var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
+//var host=$("div#testDataCount input#host").val();
+//var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
+//var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
 
 
 function fetchResults() {
@@ -598,7 +599,8 @@ function fetchResults() {
         return;
     }
     //var url='http://10.207.60.191:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
-    var url = 'http://10.207.16.9/SEOBOX/FetchResults?report=' + $('#testDataCount #report').val() + '&test_name=' + testName + '&limit=' + limit + '&skip=' + page;
+   // var url = 'http://10.207.16.9/SEOBOX/FetchResults?report=' + $('#testDataCount #report').val() + '&test_name=' + testName + '&limit=' + limit + '&skip=' + page;
+    var url = 'http://localhost:8080/seobox-web/FetchResults?report=' + $('#testDataCount #report').val() + '&test_name=' + testName + '&limit=' + limit + '&skip=' + page;
 
     $.ajax({
         url: url,
