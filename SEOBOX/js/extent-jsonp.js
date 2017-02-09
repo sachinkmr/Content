@@ -1,6 +1,6 @@
 /* current view */
 var currentView = 0;
- 
+
 /* counts */
 var totalTests, passedTests, failedTests, fatalTests, warningTests, errorTests, skippedTests, unknownTests;
 var totalSteps, passedSteps, failedSteps, fatalSteps, warningSteps, errorSteps, infoSteps, skippedSteps, unknownSteps;
@@ -457,34 +457,34 @@ $(document).ready(function () {
         return ($(this).find('tr').length == 1);
     }).hide(0);
     $('.details-container .test-body .test-steps table.table-results').css('display', 'table');
-	/*----- Charts   ----*/
-	var ctx2 = $('#test-analysis').get(0).getContext('2d');
-	var testChart = new Chart(ctx2).Doughnut(data, options);
-	drawLegend(testChart, 'test-analysis');
-	var ctx1 = $('#step-analysis').get(0).getContext('2d');
-	var stepChart = new Chart(ctx1).Doughnut(data1, options);
-	drawLegend(stepChart, 'step-analysis');
-	$('li.analysis.waves-effect.active').click();
-	var total = $('.total-tests .panel-lead').text();
-	var passed = $('.t-pass-count').text();
-	var percentage = Math.round((passed * 100) / (total));
-	var pieData = [{
-        value: percentage,
-        color: "#3F9F3F",
-        label: 'Passed'
-    },
-    {
-        value: 100 - percentage,
-        color: "#eceff5",
-        label: 'Failed'
-    }];
-	var ctx = $('#percentage').get(0).getContext('2d');
-	var stepChart1 = new Chart(ctx).Doughnut(pieData, options);
-	drawLegend(stepChart1, 'percentage');
-	$('ul.doughnut-legend').addClass('right');
-	$('.pass-percentage.panel-lead').text(percentage + '%');
-	$('#dashboard-view .determinate').attr('style', 'width:' + percentage + '%');
-	/*----- Charts Ends  ----*/
+    /*----- Charts   ----*/
+    var ctx2 = $('#test-analysis').get(0).getContext('2d');
+    var testChart = new Chart(ctx2).Doughnut(data, options);
+    drawLegend(testChart, 'test-analysis');
+    var ctx1 = $('#step-analysis').get(0).getContext('2d');
+    var stepChart = new Chart(ctx1).Doughnut(data1, options);
+    drawLegend(stepChart, 'step-analysis');
+    $('li.analysis.waves-effect.active').click();
+    var total = $('.total-tests .panel-lead').text();
+    var passed = $('.t-pass-count').text();
+    var percentage = Math.round((passed * 100) / (total));
+    var pieData = [{
+            value: percentage,
+            color: "#3F9F3F",
+            label: 'Passed'
+        },
+        {
+            value: 100 - percentage,
+            color: "#eceff5",
+            label: 'Failed'
+        }];
+    var ctx = $('#percentage').get(0).getContext('2d');
+    var stepChart1 = new Chart(ctx).Doughnut(pieData, options);
+    drawLegend(stepChart1, 'percentage');
+    $('ul.doughnut-legend').addClass('right');
+    $('.pass-percentage.panel-lead').text(percentage + '%');
+    $('#dashboard-view .determinate').attr('style', 'width:' + percentage + '%');
+    /*----- Charts Ends  ----*/
 //document.getElementById('tries').scrollIntoView()
 
 });
@@ -495,7 +495,7 @@ function resetFilters(cb) {
     $('.dropdown-content, .dropdown-content li').removeClass('active');
     $('.test, .node-list > li').addClass('displayed').removeClass('hide');
     $('#test-view .tests-toggle > i, #test-view .category-toggle > i').removeClass('active');
-	if (cb) {
+    if (cb) {
         cb();
     }
 }
@@ -561,32 +561,33 @@ var limit = 1000;
 var totalLogs = limit;
 var id;
 var testName;
-	/* view test info [TEST] */
+/* view test info [TEST] */
 $('.test').click(function () {
     var t = $(this);
     totalLogs = limit;
-	page = 0;
-	id = t.attr('extentid');
-	testName=t.find('div.test-head span.test-name').text();
+    page = 0;
+    id = t.attr('extentid');
+    testName = t.find('div.test-head span.test-name').text();
     page = parseInt($('#testDataCount #pageNo').val('0').val());
     $('#test-collection .test').removeClass('active');
     $('#test-details-wrapper .test-body').html('');
     var el = t.addClass('active').find('.test-body').clone();
     $('#test-details-wrapper .details-name').html(t.find('.test-name').html());
     $('#test-details-wrapper .details-container').append($(el));
-    $('.details-container .test-body .test-steps table.table-results').css('display', 'table');   
-	 
-	$('.details-container #loadMore').bind('click', function(){
-		if($(this).attr('data-clickable')=='true'){
-			fetchResults();
-		}
-	});
+    $('.details-container .test-body .test-steps table.table-results').css('display', 'table');
+
+    $('.details-container #loadMore').bind('click', function () {
+        if ($(this).attr('data-clickable') == 'true') {
+            fetchResults();
+        }
+    });
     fetchResults();
 });
 
 
-var host=$("div#testDataCount input#host").val();
-var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
+//var host=$("div#testDataCount input#host").val();
+//var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
+//var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
 
 
 function fetchResults() {
@@ -597,22 +598,19 @@ function fetchResults() {
         $('.details-container #loadMore').addClass('hide');
         return;
     }
-    //var url='http://10.207.60.191:'+port+'/JSON_validator/'+$('#testDataCount #report').val()+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
-    var url = 'http://10.207.16.9/SEOBOX/FetchResults?report=' + $('#testDataCount #report').val() + '&test_name=' + testName + '&limit=' + limit + '&skip=' + page;
-
+   
+     var url = 'http://10.207.16.9/SEOBOX/FetchResults?report=' + $('#testDataCount #report').val() + '&test_name=' + testName + '&limit=' + limit + '&skip=' + page;
+    
     $.ajax({
         url: url,
         type: 'get',
         dataType: 'jsonp',
         crossDomain: true,
         jsonp: 'jsonp',
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.error(errorThrown);
         },
-        success: function(result) {
-            result = JSON.stringify(result);
-            result = result.substring(result.indexOf('({') + 1, result.length);
-            result = $.parseJSON(result);
+        success: function (result) {
             totalLogs = result.total_rows;
             page = page + limit;
             if (totalLogs < limit) {
@@ -620,45 +618,147 @@ function fetchResults() {
             }
             $('.details-container #loadMore').attr('data-clickable', 'true');
             $('.details-container #loadMore').html('Load More Results');
-            $.each(result.rows, function(index, log) {
+            $.each(result.rows, function (index, log) {
                 //	log=$.parseJSON(log); <td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td>
+				var d=log.status=='WARNING'? 'WARN':log.status;
                 $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
-                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><div class='status label capitalize " + log.status.toLowerCase() + "'>" + log.status + "</div></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
+                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><div class='status label capitalize " + log.status.toLowerCase() + "'>" + d + "</div></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
                 $('.details-container .test-body .test-steps table.table-results >tbody >tr:last-child').html(ic);
             });
-            
+            initpageSpeedModal();
+			initStructuredDataModal();
         }
     });
 }
-//google page speed
-$(".googlePageSpeed").click(function(){
-		var url='http://'+host+':'+port+'/SEOBOX/pageSpeed/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
-    $.ajax({
-        url: url,
-        type: 'get',		
-		dataType: 'jsonp',
-		crossDomain: true,
-		jsonp: 'jsonp', 		
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-			console.log('error', errorThrown);
-		},
-        success: function (result) {
-			result=JSON.stringify(result);
-			result=result.substring(result.indexOf('({')+1,result.length);	
-			result=$.parseJSON(result);
-			totalLogs=result.total_rows;
-            page = page + limit;            
-			if(totalLogs<limit){
-				$('.details-container #loadMore').addClass('hide');
-			}
-			$('.details-container #loadMore').attr('data-clickable', 'true');
-			$('.details-container #loadMore').html('Load More Results');
-            $.each(result.rows, function (index, log) {   
-			//	log=$.parseJSON(log);
-                $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
-                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><i class='" + log.icon + "'></i></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
-                $('.details-container .test-body .test-steps table.table-results tbody tr:last-child').html(ic);	
-            });            
+function initpageSpeedModal() {
+    $('.modal-trigger').leanModal();
+    $('a.googlePageSpeed').click(function () {
+        var node = $('div#pageSpeedModal div.modal-content p');
+        $(node).html('');
+        $.ajax({
+            url: 'http://10.207.16.9/SEOBOX/PageSpeedInsight?report=' + $('#testDataCount #report').val() + '&type=' + $(this).attr('data-type') + '&key=' + $(this).attr('data-key'),
+            type: 'get',
+            dataType: 'jsonp',
+            crossDomain: true,
+            jsonp: 'jsonp',
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.error(errorThrown);
+            },
+            success: function (result, text, response) {
+                    $.each(result.data.pageStats, function (index, stat) {
+                        $('div#pageSpeedModal div.modal-content #resources .left table').append('<tr></tr>');
+                        var d = '<td>' + index + '</td><td>' + stat + '</td>';
+                        $('div#pageSpeedModal div.modal-content #resources .left table tr:last-child').html(d);
+                    });
+                    drawResourceChart(result.data.pageStats);
+					handlePassedData(result.data.passed);
+					handleFailedData(result.data.failed);
+					new jQueryCollapse($("#passedInsight, #shouldFix"), {
+						query: 'div h6',
+						show: function() {							
+							this.slideDown(200);
+						},
+						hide: function() {
+							this.slideUp(200);
+						},
+						accordion: true
+					});
+            }
+        });        
+    });
+}
+
+function handleFailedData(data){
+	$('div#pageSpeedModal div.modal-content #shouldFix').html('');
+	 $.each(data, function (index, stat) {
+		$('div#pageSpeedModal div.modal-content #shouldFix').append('<div class="outer" id='+index+'><h6 class="google-heading">'+stat.localizedRuleName+'</h6><div class="google-info"><b>Summary: </b>'+stat.summary+'</br><b>Impact: </b>'+stat.ruleImpact+'</br></div></div>');
+		if(stat.hasOwnProperty('urlBlocks')){
+			$.each(stat.urlBlocks, function (index1, block) {
+				$('div#pageSpeedModal div.modal-content #shouldFix #'+index+' .google-info').append('<b>Detail: </b>'+block.header+'</br>');
+				if(block.hasOwnProperty('urls')){
+					$('div#pageSpeedModal div.modal-content #shouldFix #'+index+' .google-info').append('<b>URLs Info: </b><ul></ul>');
+					$.each(block.urls, function (index2, url) {
+						$('div#pageSpeedModal div.modal-content #shouldFix #'+index+' .google-info ul').append('<li>'+url+'</li>');
+					});
+				}
+			});
+		}		
+	 });
+}
+
+function handlePassedData(data){
+	var node=$('div#pageSpeedModal div.modal-content #passedInsight');
+	$(node).html('');
+	 $.each(data, function (index, stat) {
+		$('div#pageSpeedModal div.modal-content #passedInsight').append('<div class="outer"><h6 class="google-heading">'+stat.localizedRuleName+'</h6><div class="google-info"><b>Summary: </b>'+stat.summary+'</div></div>');
+	 });
+	
+}
+
+
+function drawResourceChart(stats) {
+    var RESOURCE_TYPE_INFO = [
+        {label: 'JavaScript', field: 'javascriptResponseBytes', color: 'e2192c'},
+        {label: 'Images', field: 'imageResponseBytes', color: 'f3ed4a'},
+        {label: 'CSS', field: 'cssResponseBytes', color: 'ff7008'},
+        {label: 'HTML', field: 'htmlResponseBytes', color: '43c121'},
+        {label: 'Flash', field: 'flashResponseBytes', color: 'f8ce44'},
+        {label: 'Text', field: 'textResponseBytes', color: 'ad6bc5'},
+        {label: 'Other', field: 'otherResponseBytes', color: '1051e8'},
+    ];
+    var labels = [];
+    var data = [];
+    var colors = [];
+    var totalBytes = 0;
+    var largestSingleCategory = 0;
+    for (var i = 0, len = RESOURCE_TYPE_INFO.length; i < len; ++i) {
+        var label = RESOURCE_TYPE_INFO[i].label;
+        var field = RESOURCE_TYPE_INFO[i].field;
+        var color = RESOURCE_TYPE_INFO[i].color;
+        if (field in stats) {
+            var val = Number(stats[field]);
+            totalBytes += val;
+            if (val > largestSingleCategory)
+                largestSingleCategory = val;
+            labels.push(label);
+            data.push(val);
+            colors.push(color);
         }
-    });		
-});
+    }
+    // Construct the query to send to the Google Chart Tools.
+    var query = [
+        'chs=300x140',
+        'cht=p3',
+        'chts=' + ['000000', 16].join(','),
+        'chco=' + colors.join('|'),
+        'chd=t:' + data.join(','),
+        'chdl=' + labels.join('|'),
+        'chdls=000000,14',
+        'chp=1.6',
+        'chds=0,' + largestSingleCategory,
+    ].join('&');
+    var src = 'http://chart.apis.google.com/chart?' + query;
+    $('div#pageSpeedModal div.modal-content #resources .right img').attr('src', src);
+
+}
+
+function initStructuredDataModal(){
+	$('.modal-trigger').leanModal();
+    $('a.structureData').click(function () {
+        var node = $('div#pageStructureModal div.modal-content p');
+        $(node).html('');
+        $.ajax({
+            url: 'http://10.207.16.9/SEOBOX/StructuredData?report=' + $('#testDataCount #report').val() +'&key=' + $(this).attr('data-key'),
+            type: 'get',
+            dataType: 'jsonp',
+            crossDomain: true,
+            jsonp: 'jsonp',
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.error(errorThrown);
+            },
+            success: function (result, text, response) {
+                  $(node).html(result.data);  
+            }
+        });        
+    });
+}
