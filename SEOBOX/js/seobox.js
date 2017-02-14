@@ -585,9 +585,21 @@ $('.test').click(function () {
 });
 
 
-//var host=$("div#testDataCount input#host").val();
-//var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
-//var port=parseInt($("div#testDataCount input#port").val().replace(/,/g, ""))+1000;
+
+
+var url;
+var reportName=$('#testDataCount #report').val();
+if($('div#testDataCount input#webApp').val()==false){
+	var host=$("div#testDataCount input#dbHost").val();
+	var name=$("div#testDataCount input#dbName").val();
+	var port=parseInt($("div#testDataCount input#dbPort").val().replace(/,/g, ""))+1000;
+	url='http://'+host+':'+port+'/'+name+'/'+reportName+'/?filter_test_name='+testName+'limit='+limit+'&skip='+page;
+}else{
+	var host=$('div#testDataCount input#webAppHost').val();
+	var port=parseInt($('div#testDataCount input#webAppPort').val().replace(/,/g, ""));
+	var name=$('div#testDataCount input#webAppName').val();
+	url='http://'+host+':'+port+'/'+name+'/';
+}
 
 
 function fetchResults() {
@@ -598,11 +610,14 @@ function fetchResults() {
         $('.details-container #loadMore').addClass('hide');
         return;
     }
-   
-     var url = 'http://10.207.16.9/SEOBOX/FetchResults?report=' + $('#testDataCount #report').val() + '&test_name=' + testName + '&limit=' + limit + '&skip=' + page;
-    
+	var url1;
+    if($('div#testDataCount input#webApp').val()==true){
+	   url1=url+'FetchResults?report=' + $('#testDataCount #report').val() + '&test_name=' + testName + '&limit=' + limit + '&skip=' + page;
+    }else{
+	   
+    }
     $.ajax({
-        url: url,
+        url: url1,
         type: 'get',
         dataType: 'jsonp',
         crossDomain: true,
@@ -635,8 +650,14 @@ function initpageSpeedModal() {
     $('a.googlePageSpeed').click(function () {
         var node = $('div#pageSpeedModal div.modal-content p');
         $(node).html('');
+		var url1;
+		if($('div#testDataCount input#webApp').val()==true){
+		   url1=url+'PageSpeedInsight?report=' + $('#testDataCount #report').val() + '&type=' + $(this).attr('data-type') + '&key=' + $(this).attr('data-key');
+		}else{
+		   
+		}
         $.ajax({
-            url: 'http://10.207.16.9/SEOBOX/PageSpeedInsight?report=' + $('#testDataCount #report').val() + '&type=' + $(this).attr('data-type') + '&key=' + $(this).attr('data-key'),
+            url: url1,
             type: 'get',
             dataType: 'jsonp',
             crossDomain: true,
@@ -737,8 +758,14 @@ function initStructuredDataModal(){
     $('a.structureData').click(function () {
         var node = $('div#pageStructureModal div.modal-content p');
         $(node).html('');
+		var url1;
+		if($('div#testDataCount input#webApp').val()==true){
+		   url1=url+'StructuredData?report=' + $('#testDataCount #report').val() +'&key=' + $(this).attr('data-key');
+		}else{
+		   
+		}
         $.ajax({
-            url: 'http://10.207.16.9/SEOBOX/StructuredData?report=' + $('#testDataCount #report').val() +'&key=' + $(this).attr('data-key'),
+            url: url1,
             type: 'get',
             dataType: 'jsonp',
             crossDomain: true,

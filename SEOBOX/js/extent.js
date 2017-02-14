@@ -570,12 +570,13 @@ var page = parseInt($('#testDataCount #pageNo').val('0').val());
 var limit = 200;
 var totalLogs = limit;
 var id;
-
+var testName;
 	/* view test info [TEST] */
 $('.test').click(function () {
     var t = $(this);
     totalLogs = limit;
 	id = t.attr('extentid');
+
     page = parseInt($('#testDataCount #pageNo').val('0').val());
     $('#test-collection .test').removeClass('active');
     $('#test-details-wrapper .test-body').html('');
@@ -591,7 +592,6 @@ $('.test').click(function () {
 	});
     fetchResults();
 });
-
 var host=$("div#testDataCount input#dbhost").val();
 var port=parseInt($("div#testDataCount input#dbport").val().replace(/,/g, ""));
 
