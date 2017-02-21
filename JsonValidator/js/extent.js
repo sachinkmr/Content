@@ -763,7 +763,7 @@ $(document).ready(function () {
 	var stepChart = new Chart(ctx1).Doughnut(data1, options);
 	drawLegend(stepChart, 'step-analysis');
 	$('li.analysis.waves-effect.active').click();
-	var percentage = Math.round(((parseInt(passedTests)+parseInt(skippedTests)) * 100) / parseInt(totalTests));
+	var percentage = Math.round((parseInt(passedTests)* 100) / parseInt(totalTests)-parseInt(skippedTests));
 	var pieData = [{
         value: percentage,
         color: "#3F9F3F",
