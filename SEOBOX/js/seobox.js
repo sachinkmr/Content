@@ -4,7 +4,15 @@ var currentView = 0;
 /* counts */
 var totalTests, passedTests, failedTests, fatalTests, warningTests, errorTests, skippedTests, unknownTests;
 var totalSteps, passedSteps, failedSteps, fatalSteps, warningSteps, errorSteps, infoSteps, skippedSteps, unknownSteps;
-
+var host=$("div#testDataCount input#dbHost").val();
+var name=$("div#testDataCount input#dbName").val();
+var port=parseInt($("div#testDataCount input#dbPort").val().replace(/,/g, ""))+1000;
+var reportName=$('#testDataCount #report').val();
+var webAppHost=$("div#testDataCount input#webAppHost").val();
+var webAppName=$("div#testDataCount input#webAppName").val();
+var webAppPort=parseInt($("div#testDataCount input#webAppPort").val().replace(/,/g, ""));
+var reportName=$('#testDataCount #report').val();
+var url;
 totalTests = $('div#testDataCount input#totalTests').val().replace(/,/g, "");
 passedTests = $('div#testDataCount input#passedTests').val().replace(/,/g, "");
 failedTests = $('div#testDataCount input#failedTests').val().replace(/,/g, "");
@@ -575,7 +583,11 @@ $('.test').click(function () {
     $('#test-details-wrapper .details-name').html(t.find('.test-name').html());
     $('#test-details-wrapper .details-container').append($(el));
     $('.details-container .test-body .test-steps table.table-results').css('display', 'table');
-
+	if($('div#testDataCount input#webApp').val()=='false'){		
+		url='http://'+host+':'+port+'/'+name+'/'+reportName+'/?filter_test_name='+testName+'&limit='+limit+'&skip='+page;
+	}else{
+		url='http://'+webAppHost+':'+webAppPort+'/'+webAppName+'/';
+	}
     $('.details-container #loadMore').bind('click', function () {
         if ($(this).attr('data-clickable') == 'true') {
             fetchResults();
@@ -587,22 +599,7 @@ $('.test').click(function () {
 
 
 
-var url;
-var reportName=$('#testDataCount #report').val();
-if($('div#testDataCount input#webApp').val()==false){
-	var host=$("div#testDataCount input#dbHost").val();
-	var name=$("div#testDataCount input#dbName").val();
-	var port=parseInt($("div#testDataCount input#dbPort").val().replace(/,/g, ""))+1000;
-	url='http://'+host+':'+port+'/'+name+'/'+reportName+'/?filter_test_name='+testName+'limit='+limit+'&skip='+page;
-}else{
-	var host=$('div#testDataCount input#webAppHost').val();
-	var port=parseInt($('div#testDataCount input#webAppPort').val().replace(/,/g, ""));
-	var name=$('div#testDataCount input#webAppName').val();
-	url='http://'+host+':'+port+'/'+name+'/';
-}
-
-
-function fetchResults() {
+function fetchResults() {	
     $('.details-container #loadMore').html('<i class="material-icons left">loop</i> Loading Results...');
     $('.details-container #loadMore').attr('data-clickable', 'false');
     $('.details-container #loadMore').removeClass('hide');
@@ -611,10 +608,10 @@ function fetchResults() {
         return;
     }
 	var url1;
-    if($('div#testDataCount input#webApp').val()==true){
+    if($('div#testDataCount input#webApp').val()=='true'){
 	   url1=url+'FetchResults?report=' + $('#testDataCount #report').val() + '&test_name=' + testName + '&limit=' + limit + '&skip=' + page;
     }else{
-	   
+	   url1=url;
     }
     $.ajax({
         url: url1,
@@ -635,10 +632,12 @@ function fetchResults() {
             $('.details-container #loadMore').html('Load More Results');
             $.each(result.rows, function (index, log) {
                 //	log=$.parseJSON(log); <td><div class='status label capitalize "+log.status.toLowerCase()+"'>"+log.status+"</div></td>
-				var d=log.status=='WARNING'? 'WARN':log.status;
-                $('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
-                var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><div class='status label capitalize " + log.status.toLowerCase() + "'>" + d + "</div></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
-                $('.details-container .test-body .test-steps table.table-results >tbody >tr:last-child').html(ic);
+				if(log.status!=undefined){
+					var d=log.status=='WARNING'? 'WARN':log.status;
+					$('.details-container .test-body .test-steps table.table-results tbody').append('<tr></tr>');
+					var ic = "<td class='status " + log.status.toLowerCase() + "' title='" + log.status + "' alt='" + log.status + "'><div class='status label capitalize " + log.status.toLowerCase() + "'>" + d + "</div></td><td class='timestamp'>" + log.time + "</td><td class='step-name'>" + log.step + "</td><td class='step-details'>" + log.detail + "</td>";
+					$('.details-container .test-body .test-steps table.table-results >tbody >tr:last-child').html(ic);
+				}				
             });			
             initpageSpeedModal();
 			initStructuredDataModal();
@@ -651,11 +650,12 @@ function initpageSpeedModal() {
         var node = $('div#pageSpeedModal div.modal-content p');
         $(node).html('');
 		var url1;
-		if($('div#testDataCount input#webApp').val()==true){
-		   url1=url+'PageSpeedInsight?report=' + $('#testDataCount #report').val() + '&type=' + $(this).attr('data-type') + '&key=' + $(this).attr('data-key');
+		if($('div#testDataCount input#webApp').val()=='true'){
+		   url1=url+'PageSpeedInsight?report=' + $('#testDataCount #report').val() + '&key=' + $(this).attr('data-key');
 		}else{
-		   
+		    url1='http://'+host+':'+port+'/'+name+'/'+reportName+'/?filter_key='+$(this).attr('data-key');
 		}
+		var device=$(this).attr('data-type');
         $.ajax({
             url: url1,
             type: 'get',
@@ -666,14 +666,15 @@ function initpageSpeedModal() {
                 console.error(errorThrown);
             },
             success: function (result, text, response) {
-                    $.each(result.data.pageStats, function (index, stat) {
+				var deviceData=JSON.parse(result.rows[0][device]);
+                    $.each(deviceData.pageStats, function (index, stat) {
                         $('div#pageSpeedModal div.modal-content #resources .left table').append('<tr></tr>');
                         var d = '<td>' + index + '</td><td>' + stat + '</td>';
                         $('div#pageSpeedModal div.modal-content #resources .left table tr:last-child').html(d);
                     });
-                    drawResourceChart(result.data.pageStats);
-					handlePassedData(result.data.passed);
-					handleFailedData(result.data.failed);
+                    drawResourceChart(deviceData.pageStats);
+					handlePassedData(deviceData.passed);
+					handleFailedData(deviceData.failed);
 					
             }
         });        
@@ -759,10 +760,10 @@ function initStructuredDataModal(){
         var node = $('div#pageStructureModal div.modal-content p');
         $(node).html('');
 		var url1;
-		if($('div#testDataCount input#webApp').val()==true){
+		if($('div#testDataCount input#webApp').val()=='true'){
 		   url1=url+'StructuredData?report=' + $('#testDataCount #report').val() +'&key=' + $(this).attr('data-key');
 		}else{
-		   
+		   url1='http://'+host+':'+port+'/'+name+'/'+reportName+'/?filter_key='+$(this).attr('data-key');
 		}
         $.ajax({
             url: url1,
@@ -774,7 +775,7 @@ function initStructuredDataModal(){
                 console.error(errorThrown);
             },
             success: function (result, text, response) {
-                  $(node).html('<pre>'+result.data+'</pre>');  
+                  $(node).html('<pre>'+result.rows[0].data+'</pre>');  
             }
         });        
     });
