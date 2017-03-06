@@ -787,4 +787,17 @@ $(document).ready(function () {
    // for populating urls on dashboard
 	getURLs();
 	
+	// Generating CSV 
+	$('#downloadCSV').on('click', function () {
+		var siteName=$('.system-view table tr td').filter(function () {
+			return ($(this).text()=='Web Site');
+		}).closest('tr').find('td:nth-child(2)').text();
+		var str='"'+siteName+'"\r\n"';
+		$.each($('#test-collection .test .test-name'),function(){
+			str+=$(this).text()+'"\r\n"';
+		});
+		str=str.substr(0,str.length-1);
+		$(this).removeClass('hidden').attr('href','data:text/csv;charset=utf8,' + encodeURIComponent(str));
+		
+	});
 });
